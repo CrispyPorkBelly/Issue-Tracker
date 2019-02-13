@@ -3,3 +3,4 @@
 
 #ignore node module packages or dependencies
 /node_modules
+.env
