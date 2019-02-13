@@ -9,15 +9,16 @@
 'use strict';
 
 var expect = require('chai').expect;
-const dbConfig = require('./config/database.config.js');
 var MongoClient = require('mongodb');
+const mongoose = require('mongoose');
 var ObjectId = require('mongodb').ObjectID;
+const Issue = require("../app/models/issue.model");
 
 mongoose.Promise = global.Promise;
 
 module.exports = function (app) {
 
-  mongoose.connect(dbConfig.url, { 
+  mongoose.connect(process.env.DATABASE_URL, { 
     useNewUrlParser: true 
   }).then( () => {
     console.log("Successfully connected to database");
@@ -30,12 +31,15 @@ module.exports = function (app) {
   
     .get(function (req, res){
       var project = req.params.project;
-      console.log(req.params);
+      
     })
     
     .post(function (req, res){
       var project = req.params.project;
-      
+      console.log(req.query);
+      // const newIssue = new Issue({
+      //   ""
+      // })
     })
     
     .put(function (req, res){
