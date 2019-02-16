@@ -31,14 +31,22 @@ module.exports = function (app) {
   
     .get(function (req, res){
       var project = req.params.project;
-      
+      Issue.find({}) //only return username field
+        .then(issues => {
+          // console.log(issues);
+          res.send(issues);
+        }).catch(err => {
+          res.status(500).send({
+            message: err.message || "Error occured in retrieving all issues"
+          });
+        });
     })
     
     .post(function (req, res){
       var project = req.params.project;
 
       const issue_title   = req.body.issue_title;
-      const issue_text    = req.body.issue_title;
+      const issue_text    = req.body.issue_text;
       const created_by    = req.body.created_by;
       const assigned_to   = req.body.assigned_to;
       const status_text   = req.body.status_text;
@@ -54,7 +62,6 @@ module.exports = function (app) {
 
       newIssue.save()
        .then( issue => {
-         console.log(issue);
          res.send({
           "issue_title": issue.issue_title,
           "issue_text": issue.issue_text,
@@ -68,7 +75,7 @@ module.exports = function (app) {
           "_id": issue._id
          })
        }).catch(err => {
-        console.log(err.message);
+        // console.log(err.message);
          res.status(500).send({
            message: err.message || "Error has occured in saving new user"
        });
@@ -79,66 +86,56 @@ module.exports = function (app) {
       var project = req.params.project;
       const issueId       = req.body._id;
       const issue_title   = req.body.issue_title;
-      const issue_text    = req.body.issue_title;
+      const issue_text    = req.body.issue_text;
       const created_by    = req.body.created_by;
       const assigned_to   = req.body.assigned_to;
       const status_text   = req.body.status_text;
-      const closedValue   = (typeof req.body.open == 'undefined') ? false : true;
-
-      console.log(issueId);
-      
-      Issue.findByIdAndUpdate( issueId, {
+      const closedValue   = (typeof req.body.open == 'undefined') ? true : false;
+      Issue.findByIdAndUpdate( issueId, 
+        {
         "issue_title": issue_title,
         "issue_text": issue_text,
         "updated_on": Date.now(),
         "created_by": created_by,
         "assigned_to": assigned_to,
         "status_text": status_text,
-        "closed": closedValue
+        "open": closedValue
       }
       ).then(issue => {
-        console.log('Updating issue');
-        res.send({
-          "issue_title": issue.issue_title,
-          "issue_text": issue.issue_text,
-          "created_on": issue.created_on,
-          "updated_on": issue.updated_on,
-          "created_by": issue.created_by,
-          "assigned_to": issue.assigned_to,
-          "status_text": issue.status_text,
-          "open": issue.open,
-          "status_text": issue.status_text,
-          "_id": issue._id
-        })
-      }).catch(err => {
-        res.status(500).send({
-          message: err.message || "Error occured in updating issue log for issue"
-          });
+        //If no issue exists with that ID, throw this error
+        if (!issue) {
+          return res.send("Could not update issue: " + issueId);
+        }
+        
+        res.send("Successfully updated issue: " + issue._id);
+      })
+      .catch(err => {
+        if (err.kind === 'ObjectId') {
+          return res.send("Could not update  issue: " + issueId);
+        }
+
+        // console.log(err.message);
+        res.send("Error occured in updating issue log for issue");
       });
     })
     
     .delete(function (req, res){
       var project = req.params.project;
-      console.log('hi');
-
       const issueId       = req.body._id;
+
       Issue.findByIdAndRemove( issueId
       ).then( issue => {
-        console.log('Deleting issue');
-        res.send({
-          "issue_title": issue.issue_title,
-          "issue_text": issue.issue_text,
-          "created_on": issue.created_on,
-          "updated_on": issue.updated_on,
-          "created_by": issue.created_by,
-          "assigned_to": issue.assigned_to,
-          "status_text": issue.status_text,
-          "open": issue.open,
-          "status_text": issue.status_text,
-          "_id": issue._id
-        })
+        if (!issue) {
+          return res.send("Could not delete issue: " + issueId);
+        }
+
+        res.send("Successfully deleted issue: " + issueId)
       }).catch(err => {
-        res.status(500).send({
+        if (err.kind === 'ObjectId') {
+          return res.send("Could not delete issue: " + issueId);
+        }
+
+        res.send({
           message: err.message || "Error occured in deleting issue log for issue"
           });
       });

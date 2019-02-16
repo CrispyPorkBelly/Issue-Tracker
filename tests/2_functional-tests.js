@@ -29,19 +29,51 @@ suite('Functional Tests', function() {
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
-          
-          //fill me in too!
-          
+          assert.equal(res.body.issue_title, 'Title');
+          assert.equal(res.body.issue_text, 'text');
+          assert.equal(res.body.created_by, 'Functional Test - Every field filled in');
+          assert.equal(res.body.assigned_to, 'Chai and Mocha');
+          assert.equal(res.body.status_text,'In QA');
           done();
         });
       });
       
       test('Required fields filled in', function(done) {
-        
+        chai.request(server)
+         .post('/api/issues/test')
+         .send({
+           issue_title: 'ReqFieldsOnlyTitle',
+           issue_text: 'ReqFieldsOnlyText',
+           created_by: 'Functional Test - Required fields filled in',
+         })
+         .end(function(err, res) {
+           assert.equal(res.status, 200);
+           assert.equal(res.body.issue_title, 'ReqFieldsOnlyTitle');
+           assert.equal(res.body.issue_text, 'ReqFieldsOnlyText');
+           assert.equal(res.body.created_by, 'Functional Test - Required fields filled in');
+           assert.isUndefined(res.body.assigned_to);
+           assert.isUndefined(res.body.status_text);
+          done();
+         })
       });
       
       test('Missing required fields', function(done) {
-        
+        chai.request(server)
+          .post('/api/issues/test')
+          .send({
+            assigned_to: 'Chai and Mocha',
+            status_text: 'In QA'
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 500);
+            assert.isUndefined(res.body.issue_title);
+            assert.isUndefined(res.body.issue_text);
+            assert.isUndefined(res.body.created_by);
+            assert.isUndefined(res.body.assigned_to);
+            assert.isUndefined(res.body.status_text);
+            assert.equal(res.body.message, 'Issue validation failed: issue_title: Path `issue_title` is required., issue_text: Path `issue_text` is required.')
+            done();
+          })
       });
       
     });

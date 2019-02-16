@@ -22,11 +22,11 @@
 		"zombie": "^6.1.4"
 	},
 	"engines": {
-		"node": "4.4.3"
+		"node": ">=4.4.3"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://hyperdev.com/#!/project/welcome-project"
+		"url": "https://github.com/CrispyPorkBelly/Issue-Tracker"
 	},
 	"keywords": [
 		"node",

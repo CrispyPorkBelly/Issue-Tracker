@@ -67,3 +67,28 @@ app.listen(process.env.PORT || 3000, function () {
 });
 
 module.exports = app; //for testing
+
+// Issue.findByIdAndUpdate( issueId,  {
+//     "issue_title": issue_title,
+//     "issue_text": issue_text,
+//     "updated_on": Date.now(),
+//     "created_by": created_by,
+//     "assigned_to": assigned_to,
+//     "status_text": status_text,
+//     "open": closedValue
+//   }
+//   ).then(issue => {
+//     if (!issue) {
+//       res.status(400).send(
+//         "Failed to update issue: " + issue._id
+//       );
+//     }
+
+//     console.log("Updating athlete log");
+//     res.send("Successfully updated issue: " + issue._id);
+//   }).catch(err => {
+//     res.status(500).send({
+//       message: err.message || "Error occured in updating exercise log for athlete"
+//     });
+//   });
+//     })
