@@ -79,9 +79,18 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT /api/issues/{project} => text', function() {
-      
+
       test('No body', function(done) {
-        
+        chai.request(server)
+        .put('/api/issues/test')
+        .send({
+          
+        })
+         .end(function (err, res) {
+          console.log(res.body);
+          assert.deepEqual(res.body, {});
+          done();
+         })
       });
       
       test('One field to update', function(done) {
