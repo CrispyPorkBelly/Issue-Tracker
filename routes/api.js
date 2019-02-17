@@ -31,13 +31,49 @@ module.exports = function (app) {
   
     .get(function (req, res){
       var project = req.params.project;
-      Issue.find({}) //only return username field
+      
+      //compile search criteria based on optional query parameters
+      const searchCriteria = {};
+      // console.log(req.query);
+
+      if (req.query._id) {
+        searchCriteria._id = req.query._id;
+      }
+      if (req.query.issue_title) {
+        searchCriteria.issue_title = req.query.issue_title;
+      }
+      if (req.query.issue_text) {
+        searchCriteria.issue_text = req.query.issue_text;
+      }
+      //Opting to not implement this feature as it is not as needed such as opened /closed status.
+      // if (req.query.created_by) {
+      //   searchCriteria.created_by = req.query.created_by;
+      // }
+      // if (req.query.updated_on) {
+      //   searchCriteria.updated_on = req.query.updated_on;
+      // }
+      if (req.query.assigned_to) {
+        searchCriteria.assigned_to = req.query.assigned_to;
+      }
+      if (req.query.status_text) {
+        searchCriteria.status_text = req.query.status_text;
+      }
+      if (req.query.open) {
+        searchCriteria.open = req.query.open;
+      }
+
+      // console.log(searchCriteria);
+      
+      Issue.find(searchCriteria) 
         .then(issues => {
           // console.log(issues);
+
+
+
           res.send(issues);
         }).catch(err => {
           res.status(500).send({
-            message: err.message || "Error occured in retrieving all issues"
+            message: err.message || "Error occured in retrieving issues"
           });
         });
     })
